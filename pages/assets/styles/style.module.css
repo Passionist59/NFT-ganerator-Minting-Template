@@ -1,0 +1,13 @@
+.bg_background {
+  background-image: url("../img/background-1920x1280.jpg");
+}
+
+.btn_custom {
+  background: linear-gradient(90deg,#7a19d0,#b32caf);
+  padding: 10px 80px;
+  border-radius: 35px 8px 35px 8px;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 20px;
+}

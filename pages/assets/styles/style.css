@@ -1,0 +1,91 @@
+.bg-background {
+  background-image: url("../img/background-1920x1280.jpg");
+}
+@media (max-width: 600px) {
+  .bg-background.mint {
+    background-position: top right;
+  }
+}
+.banner-image {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 65%);
+}
+body svg {
+  margin-right: 0;
+}
+.header {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.btn-custom {
+  background: rgb(122, 25, 208);
+  background: linear-gradient(
+    90deg,
+    rgba(122, 25, 208, 1) 0%,
+    rgba(179, 44, 175, 1) 100%
+  );
+  padding: 10px 80px;
+  border-radius: 35px 8px 35px 8px;
+  color: white;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 20px;
+}
+.btn-custom.small {
+  padding: 8px 30px;
+  font-size: 18px;
+  /* max-height: min-content; */
+  height: fit-content;
+  border-radius: 30px 8px 30px 8px;
+}
+.container {
+  margin-right: auto;
+  margin-left: auto;
+}
+.carousel-container {
+  margin-top: 120px;
+  background-color: #3d1057;
+}
+
+html,
+body {
+  scroll-behavior: smooth;
+}
+
+body .owl-theme .owl-dots .owl-dot span {
+  width: 70px;
+  height: 4px;
+  background-color: #6d5081;
+}
+body .owl-theme .owl-dots .owl-dot.active span {
+  background-color: white;
+}
+@media (max-width: 700px) {
+  body .owl-theme .owl-dots .owl-dot span {
+    width: 20px;
+    height: 4px;
+  }
+}
+
+body button:focus {
+  border: none;
+  outline: none;
+}
+
+.key-image {
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 30px;
+}
+/* .key-image img {
+  width: 70%;
+} */
+
+.roadmap-image {
+  width: 40%;
+}
