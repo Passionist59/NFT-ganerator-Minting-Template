@@ -1,31 +1,23 @@
 import { useState, useEffect } from "react";
 import {ethers} from "ethers";
-import contract from "../components/ABI/KoiGuys.json";
-import WalletModal from "../components/mint/WalletModal";
+import contract from "../ABI/KoiGuys.json"; 
+import Logo from "../assets/img/logo2.png";
+import Image from 'next/image'
+import styles from '../assets/styles/style.module.css';
+
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-require('dotenv').config()
+// require('dotenv').config()
 const Mint = () => {
-  const [showConnectWallet, setShowConnectWallet] = useState(false);
   const [walletConnected, setWalletConnected] = useState(false);
   const [chainId, setChainId] = useState();
-  const [availableWallet, setAvailableWallet] = useState('');
   const [value, setValue] = useState(1);
   const [signer, setSigner] = useState();
-  //const [walletAddress, setWalletAddress] = useState();
-  const minus = () => {
-    if (value > 1) {
-      setValue((prev) => prev - 1);
-    }
-  };
-  const plus = () => {
-    if (Number(value) < 5) {
-      setValue((prev) => Number(prev) + 1);
-    }
-  };
+  const [walletAddress, setWalletAddress] = useState();
+
   useEffect(() => {
-    if (chainId !== undefined && chainId !== parseInt(process.env.REACT_APP_NETWORK_ID)) {
-      toast.error('Please choose the Ethereum network!', {
+    if (chainId !== undefined && chainId !== 3) {
+      toast.error('Please choose the Ropsten network!', {
         position: "top-right",
         autoClose: 3000,
         closeOnClick: true,
@@ -33,100 +25,27 @@ const Mint = () => {
       });
     }
   }, [chainId])
-  useEffect(() => {
-    const {ethereum} = window;
-    if (!ethereum) {
-      toast.error('Please make sure you have wallet extention!', {
-        position: "top-right",
-        autoClose: 3000,
-        closeOnClick: true,
-        hideProgressBar: true,
-      });
-    } else {
-      if(window.ethereum.isCoinbaseWallet){
-        setAvailableWallet('coinbase');
-      }else if(window.ethereum.isMetaMask){
-        setAvailableWallet('metamask');
-      }
-      if(window.ethereum.providers){
-        setAvailableWallet('both');
-      } 
-    }
-    console.log(window.ethereum)
-  },[])
 
-  const connectCoinbaseWalletHandler = async () => {
-    setShowConnectWallet(false);
-    var coinbaseProvider;
-    if(availableWallet === 'both'){
-      coinbaseProvider = window.ethereum.providers.find((provider) => provider.isCoinbaseWallet);
-    }
-    else if(availableWallet === 'coinbase'){
-      coinbaseProvider = window.ethereum
-    }
-    else{
-      toast.error('Please make sure you have CoinBase!', {
-        position: "top-right",
-        autoClose: 3000,
-        closeOnClick: true,
-        hideProgressBar: true,
-      });
-      return;
-    }
-    await coinbaseProvider.request({ method: 'eth_requestAccounts' });
-    const provider = new ethers.providers.Web3Provider(coinbaseProvider);
-    const signer_coinbase = provider.getSigner();
-    setWalletConnected(true);
-    setSigner(signer_coinbase);
-    //setWalletAddress(await signer_coinbase.getAddress())
-    const { chainId } = await provider.getNetwork();
-    setChainId(chainId); 
-    toast.success('Your wallet has been successfully connected!', {
-      position: "top-right",
-      autoClose: 3000,
-      closeOnClick: true,
-      hideProgressBar: true,
-    });
-  }
-
-  const connectMetaMaskHandler = async () => {
-    setShowConnectWallet(false);
-    var metamaskProvider;
-    if(availableWallet === 'both'){
-      metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
-    }
-    else if(availableWallet === 'metamask'){
-      metamaskProvider = window.ethereum
-    }
-    else{
-      toast.error('Please make sure you have MetaMask!', {
-        position: "top-right",
-        autoClose: 3000,
-        closeOnClick: true,
-        hideProgressBar: true,
-      });
-      return;
-    }
+  const connectWallet = async () => {
+    const metamaskProvider = window.ethereum
+    
     await metamaskProvider.request({ method: 'eth_requestAccounts' });
     const provider = new ethers.providers.Web3Provider(metamaskProvider);
     const signer_metamask = provider.getSigner();
     setSigner(signer_metamask);
-    //setWalletAddress(await signer_metamask.getAddress());
+    setWalletAddress(await signer_metamask.getAddress());
     const { chainId } = await provider.getNetwork();
+    console.log(chainId);
+    setChainId(chainId);
     setWalletConnected(true);
-    setChainId(chainId); 
-    toast.success('Your wallet has been successfully connected!', {
-      position: "top-right",
-      autoClose: 3000,
-      closeOnClick: true,
-      hideProgressBar: true,
-    });
   }
 
 
   const createNFTs = async () => {
+    // console.log(chainId);
+
     if (!walletConnected) {
-      toast.error('Please connect your wallet!', {
+      toast.warn('Please connect your wallet!', {
         position: "top-right",
         autoClose: 3000,
         closeOnClick: true,
@@ -134,9 +53,8 @@ const Mint = () => {
       });
       return;
     }
-    console.log(process.env.REACT_APP_NETWORK_ID)
-    if (chainId !== parseInt(process.env.REACT_APP_NETWORK_ID)) {
-      toast.error('Please choose the Ethereum network!', {
+    if (chainId == undefined && chainId !== 3) {
+      toast.warn('Please choose the Ropsten network!', {
         position: "top-right",
         autoClose: 3000,
         closeOnClick: true,
@@ -144,46 +62,47 @@ const Mint = () => {
       });
       return;
     }
-    console.log("balance:", await signer.getBalance());
+    // console.log("balance:", await signer.getBalance());
     const balance = await signer.getBalance();
     const amount = 0.08 * value;
     const options = {value: ethers.utils.parseEther(amount.toString())};
-    console.log(parseInt(balance._hex, 16));
-    console.log(options,parseInt(options.value._hex, 16));
-    if (parseInt(balance._hex, 16) - parseInt(options.value._hex, 16) < 0){
-      toast.error('Insufficient Fund!', {
-        position: "top-right",
-        autoClose: 3000,
-        closeOnClick: true,
-        hideProgressBar: true,
-      });
-      return;
-    }
-    console.log(contract);
-    const nftContract = new ethers.Contract(contract.address, contract.abi, signer);
-    console.log(nftContract);
-    await nftContract.createToken(value, options);
+    console.log(options);
+
+
+    // console.log(parseInt(balance._hex, 16));
+    // console.log(options,parseInt(options.value._hex, 16));
+    // if (parseInt(balance._hex, 16) - parseInt(options.value._hex, 16) < 0){
+    //   toast.warn('Insufficient Fund!', {
+    //     position: "top-right",
+    //     autoClose: 3000,
+    //     closeOnClick: true,
+    //     hideProgressBar: true,
+    //   });
+    //   return;
+    // }
+    // console.log(contract);
+    // const nftContract = new ethers.Contract(contract.address, contract.abi, signer);
+    // console.log(nftContract);
+    // await nftContract.createToken(value, options);
   }
 
   return (
-    <>
+    <div id='mint' className={styles.mint_background}>
       <div className="bg-background min-h-screen py-4 bg-cover bg-center mint">
         <div className="header flex justify-between   items-center px-4 py-2 md:py-0  max-w-7xl mx-auto">
-          <Link to="/" className="">
-            <img
+          <a href="/" className="">
+            <Image
               src={Logo}
-              className="w-40 md:w-60 hidden md:block py-2"
+              className="w-10 md:w-10 py-2"
               alt=""
             />
-            <img src={Logo2} className="w-40 md:w-60 md:hidden" alt="" />
-          </Link>
+          </a>
           {
-          !walletConnected 
+          !walletConnected
           ?
-          <button className="btn-custom h-auto small" onClick={() => setShowConnectWallet(true)}>Connect</button>
+          <button className={styles.connect_btn} onClick={() => connectWallet()}>Connect</button>
           :
-          <></>
-          // <button className="bg-white bg-opacity-20 shadow-2xl  rounded-tl-3xl rounded-tr-md rounded-bl-md rounded-br-3xl text-white py-1 font-bold">Wallet: {walletAddress}</button>
+          <button className={styles.connect_btn}>connected</button>
           }
           
         </div>
@@ -207,9 +126,6 @@ const Mint = () => {
           <div className="mx-auto">
             <div className="flex mt-2 items-center ">
               <div className="bg-white bg-opacity-20 shadow-2xl  sm:w-80  py-2 rounded-tl-3xl rounded-tr-md rounded-bl-md rounded-br-3xl mr-2 flex text-white px-4">
-                <button onClick={minus}>
-                  <i className="fas fa-minus"></i>
-                </button>
                 <input
                   type="tell"
                   className="bg-transparent h-full w-full focus:outline-none text-center font-bold"
@@ -219,11 +135,8 @@ const Mint = () => {
                   value={value}
                   onChange={(e) => setValue(e.target.value)}
                 />
-                <button onClick={plus}>
-                  <i className="fas fa-plus"></i>
-                </button>
               </div>
-              <button className="btn-custom h-auto small" onClick={createNFTs}>Mint</button>
+              <button className={styles.connect_btn} onClick={() => createNFTs()}>Mint</button>
             </div>
             <div className="mt-3">
               <div className="grid justify-start items-center grid-flow-col gap-8 w-full">
@@ -241,29 +154,42 @@ const Mint = () => {
                 </button>
                 <button
                   className=" bg-white bg-opacity-20 shadow-2xl  rounded-tl-3xl rounded-tr-md rounded-bl-md rounded-br-3xl w-14 text-white py-1 font-bold"
+                  onClick={() => setValue(3)}
+                >
+                  3
+                </button>
+                <button
+                  className=" bg-white bg-opacity-20 shadow-2xl  rounded-tl-3xl rounded-tr-md rounded-bl-md rounded-br-3xl w-14 text-white py-1 font-bold"
+                  onClick={() => setValue(4)}
+                >
+                  4
+                </button>
+                <button
+                  className=" bg-white bg-opacity-20 shadow-2xl  rounded-tl-3xl rounded-tr-md rounded-bl-md rounded-br-3xl w-14 text-white py-1 font-bold"
                   onClick={() => setValue(5)}
                 >
                   5
                 </button>
               </div>
             </div>
-            <img src={Logo2} alt="" className="hidden sm:block mx-auto mt-4" />
+            {/* <Image src={Logo2} alt="" className="hidden sm:block mx-auto mt-4" /> */}
           </div>
         </div>
       </div>
-      <footer
-        className="border-t-2 border-white py-6 text-center"
-        style={{ backgroundColor: "#13241E" }}
-      >
-        <p className="text-white font-medium">Copyright KoiGuys 2022</p>
-      </footer>
-
-      <WalletModal show = {showConnectWallet} setShow = {setShowConnectWallet} connectCoinbaseWalletHandler = {connectCoinbaseWalletHandler} connectMetaMaskHandler = {connectMetaMaskHandler} />
       <ToastContainer 
           theme="colored"
         />
-    </>
+    </div>
   );
 };
+
+export async function getStaticProps() {
+  // Connect to Database using DB properties
+  return {
+     props: { 
+        networkID: process.env.REACT_APP_NETWORK_ID
+     }
+  }
+}
 
 export default Mint;

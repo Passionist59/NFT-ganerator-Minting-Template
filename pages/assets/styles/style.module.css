@@ -1,5 +1,6 @@
 .bg_background {
   background-image: url("../img/background-1920x1280.jpg");
+  background-size: 100% 100%;
 }
 
 .btn_custom {
@@ -10,4 +11,27 @@
   text-transform: uppercase;
   font-weight: 700;
   font-size: 20px;
+}
+
+.btn_custom:focus {
+  outline: none !important;
+}
+
+.connect_btn {
+  background: linear-gradient(90deg,#7a19d0,#b32caf);
+  padding: 5px 40px;
+  border-radius: 20px 20px 20px 20px;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.connect_btn:focus {
+  outline: none !important;
+}
+
+.mint_background {
+  background-image: url("../img/background-1920x1080.jpg");
+  background-size: 100% 100%;
 }

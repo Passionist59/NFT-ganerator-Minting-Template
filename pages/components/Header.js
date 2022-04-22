@@ -1,7 +1,3 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import Link from 'next/link'
-import Logo from "../assets/img/logo2.png";
 import styles from '../assets/styles/style.module.css';
 import DefaultNavbar from './DefaultNavbar'
 
@@ -20,27 +16,8 @@ export default function Header() {
                 </p>
               </div>
               <div className="grid grid-flow-col justify-center text-center items-center gap-4 text-white">
-                <a
-                  href="https://discord.gg/MtudMRc4zd"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {/* <p className="text-sm ml-0">Discord</p> */}
-                </a>
-                <a
-                  href="/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-center"
-                >
-                </a>
-              </div>
-              <div>
-                <Image
-                  src={Logo}
-                  alt=""
-                  className="mx-auto max-w-xs mt-8 w-full hidden md:block"
-                />
+                <a href="https://discord.gg/MtudMRc4zd" target="_blank" rel="noreferrer" ></a>
+                <a href="/" target="_blank" rel="noreferrer" className="text-center" ></a>
               </div>
             </div>
           </div>

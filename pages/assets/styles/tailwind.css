@@ -284,8 +284,7 @@ button {
  * results in a loss of the default `button` focus styles.
  */
 button:focus {
-  outline: 1px dotted;
-  outline: 5px auto -webkit-focus-ring-color;
+  outline: none !important;
 }
 fieldset {
   margin: 0;
@@ -1297,8 +1296,7 @@ button {
  * results in a loss of the default `button` focus styles.
  */
 button:focus {
-  outline: 1px dotted;
-  outline: 5px auto -webkit-focus-ring-color;
+  outline: none;
 }
 fieldset {
   margin: 0;
