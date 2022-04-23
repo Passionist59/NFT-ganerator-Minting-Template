@@ -1,14 +1,22 @@
 import { useState, useEffect } from "react";
+import Countdown from 'react-countdown';
+
 import {ethers} from "ethers";
 import contract from "../ABI/KoiGuys.json"; 
 import Logo from "../assets/img/logo2.png";
 import Image from 'next/image'
 import styles from '../assets/styles/style.module.css';
+const { MerkleTree } = require("merkletreejs");
+const keccak256 = require('keccak256');
 
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast, Flip } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 // require('dotenv').config()
 const Mint = () => {
+  const [mintAddress, setMintaddress] = useState();
+  const [hexProof, sethexProof] = useState(null);
+  
+
   const [walletConnected, setWalletConnected] = useState(false);
   const [chainId, setChainId] = useState();
   const [value, setValue] = useState(1);
@@ -17,7 +25,7 @@ const Mint = () => {
 
   useEffect(() => {
     if (chainId !== undefined && chainId !== 3) {
-      toast.error('Please choose the Ropsten network!', {
+      toast.warn('Please choose the Ropsten network!', {
         position: "top-right",
         autoClose: 3000,
         closeOnClick: true,
@@ -27,22 +35,81 @@ const Mint = () => {
   }, [chainId])
 
   const connectWallet = async () => {
-    const metamaskProvider = window.ethereum
+
+    const metamaskProvider = window.ethereum;
     
     await metamaskProvider.request({ method: 'eth_requestAccounts' });
     const provider = new ethers.providers.Web3Provider(metamaskProvider);
     const signer_metamask = provider.getSigner();
+    
     setSigner(signer_metamask);
-    setWalletAddress(await signer_metamask.getAddress());
+    const currentAccount = await signer_metamask.getAddress()
+    setWalletAddress(currentAccount);
     const { chainId } = await provider.getNetwork();
-    console.log(chainId);
+    
     setChainId(chainId);
     setWalletConnected(true);
+
+    const whitelistAddresses = contract.whitelist;
+    const leafNodes = whitelistAddresses.map(addr => keccak256(addr));
+    const merkleTree = new MerkleTree(leafNodes, keccak256, { sortPairs: true });
+    whitelistAddresses.map((addr,index) => {
+      if (addr == currentAccount ){
+        setMintaddress(leafNodes[index]);
+        sethexProof(merkleTree.getHexProof(leafNodes[index]));
+        // console.log("Gethexproof", merkleTree.getHexProof(leafNodes[index]));
+      }
+    });
   }
 
+  const renderer = ({ days, hours, minutes,seconds, completed }) => {
+    if (completed) {
+      return '';
+    } else {
+      // Render a countdown
+      
+      return (<div className="counterdown">
+        <div className="countdown-days countdown-round">
+            <div className="days">
+              {days}
+            </div>
+            <div className="counterdown-text">
+              days
+            </div>
+        </div>
+        <div className="timer-space">:</div>
+        <div className="countdown-days countdown-round">
+            <div className="days">
+              {hours}
+            </div>
+            <div className="counterdown-text">
+              hours
+            </div>
+        </div>
+        <div className="timer-space">:</div>
+        <div className="countdown-days countdown-round">
+            <div className="days">
+              {minutes}
+            </div>
+            <div className="counterdown-text">
+              minutes
+            </div>
+        </div>
+        <div className="timer-space">:</div>
+        <div className="countdown-days countdown-round">
+            <div className="days">
+              {seconds}
+            </div>
+            <div className="counterdown-text">
+              seconds
+            </div>
+        </div>
+      </div>
+      )
+    }
+  };
 
   const createNFTs = async () => {
-    // console.log(chainId);
 
     if (!walletConnected) {
       toast.warn('Please connect your wallet!', {
@@ -53,7 +120,7 @@ const Mint = () => {
       });
       return;
     }
-    if (chainId == undefined && chainId !== 3) {
+    if (chainId == undefined || chainId !== 3) {
       toast.warn('Please choose the Ropsten network!', {
         position: "top-right",
         autoClose: 3000,
@@ -62,28 +129,113 @@ const Mint = () => {
       });
       return;
     }
-    // console.log("balance:", await signer.getBalance());
     const balance = await signer.getBalance();
-    const amount = 0.08 * value;
-    const options = {value: ethers.utils.parseEther(amount.toString())};
-    console.log(options);
+    console.log(balance);
+    let amount;
+    let options;
 
-
-    // console.log(parseInt(balance._hex, 16));
-    // console.log(options,parseInt(options.value._hex, 16));
-    // if (parseInt(balance._hex, 16) - parseInt(options.value._hex, 16) < 0){
-    //   toast.warn('Insufficient Fund!', {
-    //     position: "top-right",
-    //     autoClose: 3000,
-    //     closeOnClick: true,
-    //     hideProgressBar: true,
-    //   });
-    //   return;
-    // }
-    // console.log(contract);
-    // const nftContract = new ethers.Contract(contract.address, contract.abi, signer);
-    // console.log(nftContract);
-    // await nftContract.createToken(value, options);
+    console.log(contract);
+    const nftContract = new ethers.Contract(contract.address, contract.abi, signer);
+    console.log(nftContract);
+    if (await nftContract.merkletreeVerify(hexProof) && hexProof) {
+      amount = 0.02 * value;
+      options = {value: ethers.utils.parseEther(amount.toString())};
+      if (parseInt(balance._hex, 16) - parseInt(options.value._hex, 16) < 0){
+        toast.warn('Insufficient Fund!', {
+          position: "top-right",
+          autoClose: 3000,
+          closeOnClick: true,
+          hideProgressBar: true,
+        });
+        return;
+      }
+      try{
+        await nftContract.whitelistMint(walletAddress, value, hexProof, options);
+        nftContract.on("mint", (address, event) => {
+          toast.success('Success Full mint!', {
+            position: "top-right",
+            autoClose: 3000,
+            closeOnClick: true,
+            hideProgressBar: true,
+          });
+        });
+      } catch(error){
+        if (error["code"] === 4001) {
+          toast.error(error["message"].split(":")[1], {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: 0,
+            theme: "dark",
+            transition: Flip,
+          });
+        } else {
+          toast.error(error["data"]["message"].split(":")[1], {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: 0,
+            theme: "dark",
+            transition: Flip,
+          });
+        }
+      }
+    } else {
+      amount = 0.08 * value;
+      options = {value: ethers.utils.parseEther(amount.toString())};
+      if (parseInt(balance._hex, 16) - parseInt(options.value._hex, 16) < 0){
+        toast.warn('Insufficient Fund!', {
+          position: "top-right",
+          autoClose: 3000,
+          closeOnClick: true,
+          hideProgressBar: true,
+        });
+        return;
+      }
+      try{
+        await nftContract.publicSaleMint(walletAddress, value, options);
+        nftContract.on("mint", (address, event) => {
+          toast.success('Success Full mint!', {
+            position: "top-right",
+            autoClose: 3000,
+            closeOnClick: true,
+            hideProgressBar: true,
+          });
+        });
+      } catch(error){
+        if (error["code"] === 4001) {
+          toast.error(error["message"].split(":")[1], {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: 0,
+            theme: "dark",
+            transition: Flip,
+          });
+        } else {
+          toast.error(error["data"]["message"].split(":")[1], {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: 0,
+            theme: "dark",
+            transition: Flip,
+          });
+        }
+      }
+    }
   }
 
   return (
@@ -175,6 +327,11 @@ const Mint = () => {
             {/* <Image src={Logo2} alt="" className="hidden sm:block mx-auto mt-4" /> */}
           </div>
         </div>
+        <Countdown 
+            date={Date.now() + 1.728e+8}
+            renderer={renderer}
+          />
+
       </div>
       <ToastContainer 
           theme="colored"
