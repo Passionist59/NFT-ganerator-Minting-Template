@@ -35,3 +35,18 @@
   background-image: url("../img/background-1920x1080.jpg");
   background-size: 100% 100%;
 }
+
+.opensea_btn_container {
+  justify-content: center;
+  display: flex;
+}
+
+.opensea_btn {
+  background: linear-gradient(90deg,#7a19d0,#b32caf);
+  padding: 10px 20px;
+  border-radius: 20px 15px 20px 15px;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 13px;
+}

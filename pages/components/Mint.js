@@ -4,6 +4,7 @@ import Countdown from 'react-countdown';
 import {ethers} from "ethers";
 import contract from "../ABI/KoiGuys.json"; 
 import Logo from "../assets/img/logo2.png";
+import { FaEthereum } from "react-icons/fa";
 import Image from 'next/image'
 import styles from '../assets/styles/style.module.css';
 const { MerkleTree } = require("merkletreejs");
@@ -14,7 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // require('dotenv').config()
 const Mint = () => {
   const [mintAddress, setMintaddress] = useState();
-  const [hexProof, sethexProof] = useState(null);
+  const [hexProof, sethexProof] = useState([]);
   
 
   const [walletConnected, setWalletConnected] = useState(false);
@@ -22,9 +23,10 @@ const Mint = () => {
   const [value, setValue] = useState(1);
   const [signer, setSigner] = useState();
   const [walletAddress, setWalletAddress] = useState();
+  const [url, setURL] = useState("");
 
   useEffect(() => {
-    if (chainId !== undefined && chainId !== 3) {
+    if (chainId !== undefined && chainId !== 4) {
       toast.warn('Please choose the Ropsten network!', {
         position: "top-right",
         autoClose: 3000,
@@ -57,9 +59,10 @@ const Mint = () => {
       if (addr == currentAccount ){
         setMintaddress(leafNodes[index]);
         sethexProof(merkleTree.getHexProof(leafNodes[index]));
-        // console.log("Gethexproof", merkleTree.getHexProof(leafNodes[index]));
+        console.log("Gethexproof", merkleTree.getHexProof(leafNodes[index]));
       }
     });
+    setURL("https://testnets.opensea.io/assets/"+contract.address)
   }
 
   const renderer = ({ days, hours, minutes,seconds, completed }) => {
@@ -120,7 +123,7 @@ const Mint = () => {
       });
       return;
     }
-    if (chainId == undefined || chainId !== 3) {
+    if (chainId == undefined || chainId !== 4) {
       toast.warn('Please choose the Ropsten network!', {
         position: "top-right",
         autoClose: 3000,
@@ -138,7 +141,7 @@ const Mint = () => {
     const nftContract = new ethers.Contract(contract.address, contract.abi, signer);
     console.log(nftContract);
     if (await nftContract.merkletreeVerify(hexProof) && hexProof) {
-      amount = 0.02 * value;
+      amount = 0.01 * value;
       options = {value: ethers.utils.parseEther(amount.toString())};
       if (parseInt(balance._hex, 16) - parseInt(options.value._hex, 16) < 0){
         toast.warn('Insufficient Fund!', {
@@ -151,14 +154,17 @@ const Mint = () => {
       }
       try{
         await nftContract.whitelistMint(walletAddress, value, hexProof, options);
-        nftContract.on("mint", (address, event) => {
-          toast.success('Success Full mint!', {
-            position: "top-right",
-            autoClose: 3000,
-            closeOnClick: true,
-            hideProgressBar: true,
-          });
-        });
+        const m = await nftContract.totalSupply();
+        console.log("sdfgsdfg",m.toNumber());
+        setURL("https://testnets.opensea.io/assets/"+contract.address+"/"+m.toNumber());
+        // nftContract.on("mint", (address, event) => {
+        //   toast.success('Success Full mint!', {
+        //     position: "top-right",
+        //     autoClose: 3000,
+        //     closeOnClick: true,
+        //     hideProgressBar: true,
+        //   });
+        // });
       } catch(error){
         if (error["code"] === 4001) {
           toast.error(error["message"].split(":")[1], {
@@ -173,7 +179,8 @@ const Mint = () => {
             transition: Flip,
           });
         } else {
-          toast.error(error["data"]["message"].split(":")[1], {
+          console.log("Error",error["message"].split(":"));
+          toast.error(error["message"].split(":")[11].split('"')[0], {
             position: "bottom-right",
             autoClose: 3000,
             hideProgressBar: false,
@@ -199,15 +206,16 @@ const Mint = () => {
         return;
       }
       try{
-        await nftContract.publicSaleMint(walletAddress, value, options);
-        nftContract.on("mint", (address, event) => {
-          toast.success('Success Full mint!', {
-            position: "top-right",
-            autoClose: 3000,
-            closeOnClick: true,
-            hideProgressBar: true,
-          });
-        });
+        const m = await nftContract.publicSaleMint(walletAddress, value, options);
+        setURL("https://testnets.opensea.io/assets/"+contract.address+"/"+m.toNumber());
+        // nftContract.on("mint", (address, event) => {
+        //   toast.success('Success Full mint!', {
+        //     position: "top-right",
+        //     autoClose: 3000,
+        //     closeOnClick: true,
+        //     hideProgressBar: true,
+        //   });
+        // });
       } catch(error){
         if (error["code"] === 4001) {
           toast.error(error["message"].split(":")[1], {
@@ -222,7 +230,7 @@ const Mint = () => {
             transition: Flip,
           });
         } else {
-          toast.error(error["data"]["message"].split(":")[1], {
+          toast.error(error["message"].split(":")[11].split('"')[0], {
             position: "bottom-right",
             autoClose: 3000,
             hideProgressBar: false,
@@ -326,6 +334,9 @@ const Mint = () => {
             </div>
             {/* <Image src={Logo2} alt="" className="hidden sm:block mx-auto mt-4" /> */}
           </div>
+        </div>
+        <div className={styles.opensea_btn_container}>
+          <a href={url} target="_blank" rel="noreferrer" className={styles.opensea_btn}>View Opensea</a>
         </div>
         <Countdown 
             date={Date.now() + 1.728e+8}

@@ -87,11 +87,13 @@ export default function ContactSection() {
             </span>
           </a>
 
-          <a href="https://ropsten.etherscan.io/address/0x5Ab29A9B994B5Dc65296559071Fe7D06d0527C73" target="_blank" rel="noreferrer" className="text-center">
+          <a href="https://rinkeby.etherscan.io/address/0xd611070Fb9Ae48b4839339DB92Ca5D511Add4939" target="_blank" rel="noreferrer" className="text-center">
             <span className="text-indigo-500 hover:text-indigo-400 text-4xl  duration-300 transition-all">
               <FaEthereum />
             </span>
           </a>
+
+          
         </div>
         <div className="flex flex-wrap mt-12 lg:mt-0 pb-8 justify-center">
           <p className="text-white">Copyright KoiGuys 2022</p>
