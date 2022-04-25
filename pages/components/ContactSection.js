@@ -1,6 +1,4 @@
-import Head from 'next/head'
 import Image from 'next/image'
-
 import Image1 from "../assets/img/019.png";
 import Image2 from "../assets/img/Untitled-1.png";
 import Image3 from "../assets/img/eth.png";
@@ -87,7 +85,7 @@ export default function ContactSection() {
             </span>
           </a>
 
-          <a href="https://rinkeby.etherscan.io/address/0xd611070Fb9Ae48b4839339DB92Ca5D511Add4939" target="_blank" rel="noreferrer" className="text-center">
+          <a href="https://rinkeby.etherscan.io/address/0x07b7d49eD89F7E30ce04178D7a7CcE91a5F1A7f9" target="_blank" rel="noreferrer" className="text-center">
             <span className="text-indigo-500 hover:text-indigo-400 text-4xl  duration-300 transition-all">
               <FaEthereum />
             </span>

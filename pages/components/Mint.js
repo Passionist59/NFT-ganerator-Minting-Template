@@ -1,23 +1,22 @@
+import Image from 'next/image'
 import { useState, useEffect } from "react";
 import Countdown from 'react-countdown';
+import { ToastContainer, toast, Flip } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 import {ethers} from "ethers";
-import contract from "../ABI/KoiGuys.json"; 
+import contract from "../ABI/coolnft.json"; 
 import Logo from "../assets/img/logo2.png";
-import { FaEthereum } from "react-icons/fa";
-import Image from 'next/image'
+
 import styles from '../assets/styles/style.module.css';
+
 const { MerkleTree } = require("merkletreejs");
 const keccak256 = require('keccak256');
 
-import { ToastContainer, toast, Flip } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
 // require('dotenv').config()
 const Mint = () => {
   const [mintAddress, setMintaddress] = useState();
   const [hexProof, sethexProof] = useState([]);
-  
-
   const [walletConnected, setWalletConnected] = useState(false);
   const [chainId, setChainId] = useState();
   const [value, setValue] = useState(1);
