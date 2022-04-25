@@ -1,0 +1,8 @@
+{
+    "editor.tabSize": 2,
+    "css.format.enable": true,
+    "editor.fontSize": 14,
+    "prettier.semi": false,
+    "search.followSymlinks": false,
+    "editor.formatOnSave": true,
+}
