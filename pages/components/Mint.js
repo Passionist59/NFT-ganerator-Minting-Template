@@ -2,10 +2,8 @@ import { useState, useEffect } from "react";
 import Countdown from 'react-countdown';
 import { ToastContainer, toast, Flip } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-
 import {ethers} from "ethers";
 import contract from "../ABI/coolnft.json";
-
 import styles from '../assets/styles/style.module.css';
 
 const { MerkleTree } = require("merkletreejs");
