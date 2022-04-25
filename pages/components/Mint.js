@@ -1,12 +1,10 @@
-import Image from 'next/image'
 import { useState, useEffect } from "react";
 import Countdown from 'react-countdown';
 import { ToastContainer, toast, Flip } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 import {ethers} from "ethers";
-import contract from "../ABI/coolnft.json"; 
-import Logo from "../assets/img/logo2.png";
+import contract from "../ABI/coolnft.json";
 
 import styles from '../assets/styles/style.module.css';
 
@@ -26,7 +24,7 @@ const Mint = () => {
 
   useEffect(() => {
     if (chainId !== undefined && chainId !== 4) {
-      toast.warn('Please choose the Ropsten network!', {
+      toast.warn('Please choose the Rinkeby network!', {
         position: "top-right",
         autoClose: 3000,
         closeOnClick: true,
@@ -123,7 +121,7 @@ const Mint = () => {
       return;
     }
     if (chainId == undefined || chainId !== 4) {
-      toast.warn('Please choose the Ropsten network!', {
+      toast.warn('Please choose the Rinkeby network!', {
         position: "top-right",
         autoClose: 3000,
         closeOnClick: true,
@@ -248,14 +246,7 @@ const Mint = () => {
   return (
     <div id='mint' className={styles.mint_background}>
       <div className="bg-background min-h-screen py-4 bg-cover bg-center mint">
-        <div className="header flex justify-between   items-center px-4 py-2 md:py-0  max-w-7xl mx-auto">
-          <a href="/" className="">
-            <Image
-              src={Logo}
-              className="w-10 md:w-10 py-2"
-              alt=""
-            />
-          </a>
+        <div className="header flex justify-between justify-end items-center px-4 py-2 md:py-0  max-w-7xl mx-auto">
           {
           !walletConnected
           ?

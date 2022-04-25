@@ -12,10 +12,10 @@ function TeamSection() {
           <button className={styles.btn_custom}>About us</button>
         </div>
         <p className="text-white font-medium text-center max-w-6xl mx-auto mt-6">
-        KoiGuys are Collection of 1888 Beautiful Koi swimming on the Eth blockchain,
+        CoolNFTs are Collection of 1888 Beautiful CoolNFT swimming on the Eth blockchain,
          randomly generated using more than 150+ characteristics! They are stored safely and 
-         securely on the Ethereum blockchain and hosted on OpenSea. KoiGuys will be sold for 
-         .08 ETH each! Stake your Koi for utility token $KOIFISH, for future drops, 
+         securely on the Ethereum blockchain and hosted on OpenSea. CoolNFTs will be sold for 
+         .08 ETH each! Stake your Cool for utility token $COOLNFT, for future drops, 
          breeding and much more!
         </p>
       </div>

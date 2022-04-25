@@ -12,7 +12,7 @@ export default function Header() {
             <div className="w-full lg:w-6/12 px-4 ml-auto mr-auto text-center">
               <div className="text-gray-200">
                 <p className="font-medium max-w-md text-lg mx-auto mb-8 mt-4 md:mt-0">
-                KoiGuys are a collection of 1888 beautiful Koi swimming on the Ethereum blockchain.
+                CoolNFTs are a collection of 1888 beautiful CoolNFT swimming on the Ethereum blockchain.
                 </p>
               </div>
               <div className="grid grid-flow-col justify-center text-center items-center gap-4 text-white">

@@ -34,7 +34,7 @@ export default function ContactSection() {
               <Image src={Image1} alt="" className="mx-auto" />
             </div>
             <p className="text-white  max-w-xs mx-auto w-full mt-6 text-center font-medium ">
-              1888 KoiGuys with more than 8 million Combinations!
+              1888 CoolNFTs with more than 8 million Combinations!
             </p>
           </div>
           <div>
@@ -63,7 +63,7 @@ export default function ContactSection() {
               <Image src={Image3} alt="" className="mx-auto" />
             </div>
             <p className="text-white  max-w-xs mx-auto w-full mt-6 text-center font-medium ">
-              Our ERC-721-KoiGuys come with full ownership & commercial usage
+              Our ERC-721-CoolNFTs come with full ownership & commercial usage
               rights.
             </p>
           </div>
@@ -94,7 +94,7 @@ export default function ContactSection() {
           
         </div>
         <div className="flex flex-wrap mt-12 lg:mt-0 pb-8 justify-center">
-          <p className="text-white">Copyright KoiGuys 2022</p>
+          <p className="text-white">Copyright CoolNFTs 2022</p>
         </div>
       </div>
     </section>
